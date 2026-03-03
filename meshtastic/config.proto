@@ -1034,11 +1034,19 @@ message Config {
     RegionCode region = 7;
 
     /*
-     * Maximum number of hops. This can't be greater than 7.
-     * Default of 3
-     * Attempting to set a value > 7 results in the default
+     * Maximum number of hops for texts and NodeInfo.
+     * This can't be greater than 7.
+     * Default of 7
+     * (This reuses the existing hop_limit field)
      */
     uint32 hop_limit = 8;
+
+    /*
+     * Maximum number of hops for broadcast packets (telemetry, position, auto beacons).
+     * This can't be greater than 7.
+     * Default of 3
+     */
+    uint32 broadcast_hop_limit = 106;
 
     /*
      * Disable TX from the LoRa radio. Useful for hot-swapping antennas and other tests.
