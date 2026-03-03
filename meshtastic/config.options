@@ -13,6 +13,8 @@
 *LoRaConfig.bandwidth int_size:16
 *LoRaConfig.coding_rate int_size:8
 *LoRaConfig.channel_num int_size:16
+*LoRaConfig.hop_limit int_size:8
+*LoRaConfig.broadcast_hop_limit int_size:8
 
 *PowerConfig.device_battery_ina_address int_size:8
 
