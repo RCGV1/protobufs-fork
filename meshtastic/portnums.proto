@@ -247,6 +247,11 @@ enum PortNum {
   CAYENNE_APP = 77;
 
   /*
+   * Baymesh: Mesh Control configuration packets.
+   */
+  MESH_CONTROL_APP = 78;
+
+  /*
    * GroupAlarm integration
    * Used for transporting GroupAlarm-related messages between Meshtastic nodes
    * and companion applications/services.

@@ -82,6 +82,11 @@ message AdminMessage {
      * device-ui config
      */
     DEVICEUI_CONFIG = 9;
+
+    /*
+     * Baymesh: Mesh Control node configuration.
+     */
+    MESH_CONTROL_CONFIG = 10;
   }
 
   /*
@@ -472,6 +477,11 @@ message AdminMessage {
      * Initiate or respond to a key verification request
      */
     KeyVerificationAdmin key_verification = 67;
+
+    /*
+     * Baymesh: Apply (true) or discard (false) pending mesh control settings.
+     */
+    bool mesh_control_apply = 68;
 
     /*
      * Tell the node to factory reset config everything; all device state and configuration will be returned to factory defaults and BLE bonds will be cleared.
