@@ -1114,6 +1114,13 @@ message Config {
     bool pa_fan_disabled = 15;
 
     /*
+     * Baymesh: Override the broadcast hop limit for this device.
+     * When set > 0, this value overrides the mesh default for broadcast packets.
+     * Can be set via MeshControl message.
+     */
+    uint32 broadcast_hop_limit = 16;
+
+    /*
      * For testing it is useful sometimes to force a node to never listen to
      * particular other nodes (simulating radio out of range). All nodenums listed
      * in ignore_incoming will have packets they send dropped on receive (by router.cpp)
@@ -1216,6 +1223,45 @@ message Config {
   message SessionkeyConfig {}
 
   /*
+   * Baymesh: Mesh Control node configuration.
+   * Controls how a node responds to signed MeshControl packets from a trusted administrator.
+   */
+  message MeshControlConfig {
+    enum AcceptPolicy {
+      /* Reject all mesh control packets (default - opt-in required). */
+      DISABLED = 0;
+      /* Deliver a ClientNotification to the connected app and wait for explicit user approval. */
+      PROMPT = 1;
+      /* Automatically apply validated settings without user interaction. */
+      AUTO = 2;
+    }
+
+    /* 32-byte shared key used to authenticate incoming mesh control packets. */
+    bytes control_key = 1;
+
+    /* How this node responds to incoming mesh control packets. */
+    AcceptPolicy accept_policy = 2;
+
+    /* Minimum seconds that must elapse between two accepted control packets. */
+    uint32 min_interval_secs = 3;
+
+    /* Allow mesh control to modify LoRa / radio parameters (preset, frequency, channel). */
+    bool allow_lora_config = 4;
+
+    /* Allow mesh control to modify directed-message and broadcast hop limits. */
+    bool allow_hop_limits = 5;
+
+    /* Allow mesh control to modify the position broadcast interval. */
+    bool allow_position_interval = 6;
+
+    /* Allow mesh control to modify the device telemetry broadcast interval. */
+    bool allow_telemetry_interval = 7;
+
+    /* Allow mesh control to modify the node-info broadcast interval. */
+    bool allow_node_info_interval = 8;
+  }
+
+  /*
    * Payload Variant
    */
   oneof payload_variant {
@@ -1229,5 +1275,6 @@ message Config {
     SecurityConfig security = 8;
     SessionkeyConfig sessionkey = 9;
     DeviceUIConfig device_ui = 10;
+    MeshControlConfig mesh_control = 11;
   }
 }
