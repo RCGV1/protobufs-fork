@@ -262,6 +262,13 @@ message Config {
      * Defaults to ENABLED
      */
     BuzzerMode buzzer_mode = 13;
+
+    /*
+     * Baymesh: Default relay node for direct messages (DMs).
+     * When sending a DM, the packet will be directed through this node as the relay.
+     * Set to 0 to disable (default behavior - direct path).
+     */
+    fixed32 dm_relay_node = 14;
   }
 
   /*
