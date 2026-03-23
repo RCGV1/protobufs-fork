@@ -234,6 +234,13 @@ message DeviceState {
    * The mesh's nodes with their available gpio pins for RemoteHardware module
    */
   repeated NodeRemoteHardwarePin node_remote_hardware_pins = 13;
+
+  /*
+   * Last accepted MeshControl seq_num for replay protection.
+   * Persisted across reboots so old replayed packets are rejected after a reboot.
+   * Managed entirely by the firmware; do not set manually.
+   */
+  uint32 last_accepted_mesh_control_seq_num = 14;
 }
 
 message NodeDatabase {
