@@ -275,6 +275,7 @@ message Config {
      * are always included (also time if GPS-synced)
      * NOTE: the more fields are included, the larger the message will be -
      *   leading to longer airtime and a higher risk of packet loss
+     * DEPRECATED in favor of GpsProfile
      */
     enum PositionFlags {
       /*
@@ -355,6 +356,28 @@ message Config {
     }
 
     /*
+     * A plain language label that users of GPS select based on their intended activity.
+     * Firmware uses this to select GPS update and position broadcast settings, position
+     * flags, and receiver-specific navigation configuration.
+     */
+    enum GpsProfile {
+      /* Profile not set; user controls the individual GPS settings. */
+      MANUAL = 0;
+
+      /* This node does not move. */
+      FIXED_POSITION = 1;
+
+      /* Hikers, runners, walkers. */
+      PEDESTRIAN = 2;
+
+      /* Cars, motorbikes. */
+      VEHICLE = 3;
+
+      /* Planes, balloons, drones. */
+      AIRBORNE = 4;
+    }
+
+    /*
      * We should send our position this often (but only if it has changed significantly)
      * Defaults to 15 minutes
      */
@@ -392,6 +415,7 @@ message Config {
     /*
      * Bit field of boolean configuration options for POSITION messages
      * (bitwise OR of PositionFlags)
+     * DEPRECATED in favor of GpsProfile
      */
     uint32 position_flags = 7;
 
@@ -424,6 +448,9 @@ message Config {
      * Set where GPS is enabled, disabled, or not present
      */
     GpsMode gps_mode = 13;
+
+    /* A pre-tuned GPS configuration selected by use case. */
+    GpsProfile gps_profile = 14;
   }
 
   /*
