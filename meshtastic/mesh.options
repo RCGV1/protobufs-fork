@@ -79,6 +79,14 @@
 *StoreForwardPlusPlus.root_hash max_size:32
 *StoreForwardPlusPlus.message max_size:240
 
+*SfppPeerBinding.sidecar_public_key max_size:32 fixed_length:true
+*SfppPeerBinding.plane_id max_size:16 fixed_length:true
+*SfppPeerBinding.scope_id max_size:16 fixed_length:true
+*SfppPeerBinding.radio_profile_digest max_size:32 fixed_length:true
+
+*SfppCatchUpRequest.request_id max_size:16 fixed_length:true
+*SfppCatchUpRequest.scope_ids max_count:8 max_size:16 fixed_length:true
+
 *RemoteShell.payload max_size:200
 
 *StatusMessage.status max_size:80
