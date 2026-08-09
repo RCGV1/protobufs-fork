@@ -164,6 +164,15 @@ enum PortNum {
   MESH_BEACON_APP = 37;
 
   /*
+   * Store and Forward archive reconciliation.
+   *
+   * This is separate from STORE_FORWARD_APP and the experimental
+   * STORE_FORWARD_PLUSPLUS_APP protocol. Payloads use the bounded
+   * StoreForwardSetReconciliation protobuf.
+   */
+  STORE_FORWARD_ARCHIVE_APP = 38;
+
+  /*
    * Provides a hardware serial interface to send and receive from the Meshtastic network.
    * Connect to the RX/TX pins of a device with 38400 8N1. Packets received from the Meshtastic
    * network is forwarded to the RX pin while sending a packet to TX will go out to the Mesh network.
