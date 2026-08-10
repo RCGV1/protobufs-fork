@@ -47,6 +47,8 @@ message StoreForwardArchive {
     StoreForwardArchiveObjectProvide archive_object_provide = 36;
     StoreForwardServiceDiscoveryRequest service_discovery_request = 37;
     StoreForwardServiceAdvertisement service_advertisement = 38;
+    StoreForwardOpaqueAdmissionRequest opaque_admission_request = 39;
+    StoreForwardOpaqueAdmissionGrant opaque_admission_grant = 40;
   }
 }
 
@@ -58,10 +60,24 @@ enum StoreForwardSessionRole {
   SESSION_ROLE_REPLICA = 2 [deprecated = true];
 }
 
+enum StoreForwardArchiveLane {
+  ARCHIVE_LANE_UNSPECIFIED = 0;
+  ARCHIVE_LANE_KEYED_TEXT = 1;
+  ARCHIVE_LANE_OPAQUE_BROADCAST = 2;
+}
+
 message StoreForwardArchiveRef {
   bytes archive_id = 1;
   fixed64 archive_generation = 2;
   bytes scope_id = 3;
+  StoreForwardArchiveLane lane = 4;
+}
+
+// An immutable object identity plus its origin archive receipt time. The time
+// is zero when the origin archive did not have a valid clock.
+message StoreForwardObjectDescriptor {
+  bytes object_id = 1;
+  fixed32 origin_server_received_at = 2;
 }
 
 // Archive-server mesh messages use the secondary radio's normal default-key
@@ -95,7 +111,7 @@ message StoreForwardArchiveBucketManifest {
   bytes bucket_digest = 4;
   uint32 page_index = 5;
   bool has_more = 6;
-  repeated bytes object_ids = 7;
+  repeated StoreForwardObjectDescriptor objects = 7;
   fixed32 requester_node_num = 8;
 }
 
@@ -119,12 +135,14 @@ message StoreForwardArchiveObjectProvide {
   bytes encrypted_payload_fragment = 10;
   uint32 original_channel_hash = 11;
   fixed32 requester_node_num = 12;
+  fixed32 origin_server_received_at = 13;
 }
 
 // Client service discovery remains on the selected primary channel.
 message StoreForwardServiceDiscoveryRequest {
   bytes scope_id = 1;
   bytes request_id = 2;
+  StoreForwardArchiveLane lane = 3;
 }
 
 message StoreForwardServiceAdvertisement {
@@ -134,7 +152,7 @@ message StoreForwardServiceAdvertisement {
   bytes request_id = 4;
 }
 
-// Admission runs on the primary radio. scope_ids are candidates only: a
+// Keyed admission runs on the primary radio. scope_ids are candidates only: a
 // client proves exactly one selected scope before the server grants a session.
 message StoreForwardAdmissionRequest {
   bytes request_id = 1;
@@ -167,6 +185,28 @@ message StoreForwardAdmissionProof {
   fixed64 admission_epoch = 2;
   bytes selected_scope_id = 3;
   bytes channel_proof = 4;
+}
+
+// Opaque broadcast recovery is transport-authorized by the client's PKI
+// identity and rate limits. It intentionally has no channel proof because the
+// serving archive does not hold the requested primary-channel PSK.
+message StoreForwardOpaqueAdmissionRequest {
+  bytes request_id = 1;
+  bytes opaque_scope_id = 2;
+  bool wait_for_slot = 3;
+  fixed64 admission_epoch = 4;
+}
+
+message StoreForwardOpaqueAdmissionGrant {
+  bytes request_id = 1;
+  fixed64 admission_epoch = 2;
+  bytes join_token = 3;
+  fixed32 join_expiry_seconds = 4;
+  bytes session_id = 5;
+  StoreForwardArchiveRef archive_ref = 6;
+  fixed32 archive_node_num = 7;
+  bytes archive_public_key = 8;
+  fixed32 session_epoch = 9;
 }
 
 message StoreForwardAdmissionGrant {
@@ -245,7 +285,7 @@ message StoreForwardBucketPage {
   bytes bucket_digest = 4;
   uint32 page_index = 5;
   bool has_more = 6;
-  repeated bytes object_ids = 7;
+  repeated StoreForwardObjectDescriptor objects = 7;
 }
 
 message StoreForwardObjectRequest {
@@ -268,6 +308,7 @@ message StoreForwardObjectProvide {
   uint32 fragment_count = 9;
   bytes encrypted_payload_fragment = 10;
   uint32 original_channel_hash = 11;
+  fixed32 origin_server_received_at = 12;
 }
 
 message StoreForwardBucketVerify {

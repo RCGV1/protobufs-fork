@@ -2,13 +2,13 @@
 
 *StoreForwardArchiveRef.archive_id max_size:16 fixed_length:true
 *StoreForwardArchiveRef.scope_id max_size:16 fixed_length:true
+*StoreForwardObjectDescriptor.object_id max_size:32 fixed_length:true
 
 *StoreForwardArchiveServerAdvertisement.primary_public_key max_size:32 fixed_length:true
 *StoreForwardArchiveServerAdvertisement.archive_public_key max_size:32 fixed_length:true
 *StoreForwardArchiveBucketHead.bucket_digest max_size:32 fixed_length:true
 *StoreForwardArchiveBucketManifest.bucket_digest max_size:32 fixed_length:true
-*StoreForwardArchiveBucketManifest.object_ids max_count:3
-*StoreForwardArchiveBucketManifest.object_ids max_size:32 fixed_length:true
+*StoreForwardArchiveBucketManifest.objects max_count:2
 *StoreForwardArchiveObjectRequest.object_ids max_count:3
 *StoreForwardArchiveObjectRequest.object_ids max_size:32 fixed_length:true
 *StoreForwardArchiveObjectProvide.object_id max_size:32 fixed_length:true
@@ -18,6 +18,13 @@
 *StoreForwardServiceDiscoveryRequest.request_id max_size:16 fixed_length:true
 *StoreForwardServiceAdvertisement.archive_public_key max_size:32 fixed_length:true
 *StoreForwardServiceAdvertisement.request_id max_size:16
+
+*StoreForwardOpaqueAdmissionRequest.request_id max_size:16 fixed_length:true
+*StoreForwardOpaqueAdmissionRequest.opaque_scope_id max_size:16 fixed_length:true
+*StoreForwardOpaqueAdmissionGrant.request_id max_size:16 fixed_length:true
+*StoreForwardOpaqueAdmissionGrant.join_token max_size:16 fixed_length:true
+*StoreForwardOpaqueAdmissionGrant.session_id max_size:8 fixed_length:true
+*StoreForwardOpaqueAdmissionGrant.archive_public_key max_size:32 fixed_length:true
 
 *StoreForwardAdmissionRequest.request_id max_size:16 fixed_length:true
 *StoreForwardAdmissionRequest.scope_ids max_count:8
@@ -45,8 +52,7 @@
 *StoreForwardBucketEnumerateRequest.catalog_snapshot_id max_size:16 fixed_length:true
 *StoreForwardBucketPage.catalog_snapshot_id max_size:16 fixed_length:true
 *StoreForwardBucketPage.bucket_digest max_size:32 fixed_length:true
-*StoreForwardBucketPage.object_ids max_count:3
-*StoreForwardBucketPage.object_ids max_size:32 fixed_length:true
+*StoreForwardBucketPage.objects max_count:3
 *StoreForwardObjectRequest.catalog_snapshot_id max_size:16 fixed_length:true
 *StoreForwardObjectRequest.object_ids max_count:3
 *StoreForwardObjectRequest.object_ids max_size:32 fixed_length:true
