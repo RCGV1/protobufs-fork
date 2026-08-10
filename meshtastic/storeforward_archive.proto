@@ -233,6 +233,8 @@ message StoreForwardJoinAccepted {
   StoreForwardSessionRole granted_role = 2;
   fixed32 session_epoch = 3;
   fixed32 session_expiry_seconds = 4;
+  fixed32 archive_node_num = 5;
+  bytes archive_public_key = 6;
 }
 
 message StoreForwardBucketDescriptor {

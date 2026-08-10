@@ -41,6 +41,7 @@
 *StoreForwardAdmissionGrant.archive_public_key max_size:32 fixed_length:true
 *StoreForwardJoinRequest.request_id max_size:16 fixed_length:true
 *StoreForwardJoinRequest.join_token max_size:16 fixed_length:true
+*StoreForwardJoinAccepted.archive_public_key max_size:32 fixed_length:true
 
 *StoreForwardBucketDescriptor.bucket_digest max_size:32 fixed_length:true
 *StoreForwardBucketCatalogRequest.catalog_snapshot_id max_size:16
