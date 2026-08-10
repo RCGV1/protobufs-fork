@@ -8,11 +8,10 @@ option java_outer_classname = "StoreForwardArchiveProtos";
 option java_package = "org.meshtastic.proto";
 option swift_prefix = "";
 
-// Every client-initiated operation uses a new, nonzero exchange_id. A server
-// caches the request digest and response material for that operation, allowing
-// an identical request to be retried without creating new state. Responses use
-// the same exchange_id; their object/page identifiers make fragment delivery
-// idempotent within the operation.
+// Every request/reply transaction uses a new, nonzero exchange_id. A server
+// caches request material for that operation, allowing an identical request to
+// be retried without creating new state. Responses echo the request exchange_id;
+// their object/page identifiers make fragment delivery idempotent.
 message StoreForwardArchive {
   uint32 protocol_version = 1;
   bytes session_id = 2;
@@ -54,7 +53,9 @@ message StoreForwardArchive {
 enum StoreForwardSessionRole {
   SESSION_ROLE_UNSPECIFIED = 0;
   SESSION_ROLE_CLIENT = 1;
-  SESSION_ROLE_REPLICA = 2;
+  // Retained only for wire compatibility. Archive-server synchronization never
+  // establishes a replica session and must reject this role.
+  SESSION_ROLE_REPLICA = 2 [deprecated = true];
 }
 
 message StoreForwardArchiveRef {
@@ -84,6 +85,7 @@ message StoreForwardArchiveBucketHead {
 message StoreForwardArchiveBucketRequest {
   StoreForwardArchiveRef archive_ref = 1;
   fixed64 bucket_sequence = 2;
+  fixed32 requester_node_num = 3;
 }
 
 message StoreForwardArchiveBucketManifest {
@@ -94,12 +96,14 @@ message StoreForwardArchiveBucketManifest {
   uint32 page_index = 5;
   bool has_more = 6;
   repeated bytes object_ids = 7;
+  fixed32 requester_node_num = 8;
 }
 
 message StoreForwardArchiveObjectRequest {
   StoreForwardArchiveRef archive_ref = 1;
   fixed64 bucket_sequence = 2;
   repeated bytes object_ids = 3;
+  fixed32 requester_node_num = 4;
 }
 
 message StoreForwardArchiveObjectProvide {
@@ -114,6 +118,7 @@ message StoreForwardArchiveObjectProvide {
   uint32 fragment_count = 9;
   bytes encrypted_payload_fragment = 10;
   uint32 original_channel_hash = 11;
+  fixed32 requester_node_num = 12;
 }
 
 // Client service discovery remains on the selected primary channel.
@@ -156,7 +161,7 @@ message StoreForwardAdmissionQueued {
 }
 
 // channel_proof is a truncated HMAC over the request, challenge, selected
-// scope, and PKI requester identity. It is omitted for a configured replica.
+// scope, and PKI requester identity.
 message StoreForwardAdmissionProof {
   bytes request_id = 1;
   fixed64 admission_epoch = 2;

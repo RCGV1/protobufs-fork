@@ -1,4 +1,4 @@
-*StoreForwardArchive.session_id max_size:8 fixed_length:true
+*StoreForwardArchive.session_id max_size:8
 
 *StoreForwardArchiveRef.archive_id max_size:16 fixed_length:true
 *StoreForwardArchiveRef.scope_id max_size:16 fixed_length:true
@@ -17,7 +17,7 @@
 *StoreForwardServiceDiscoveryRequest.scope_id max_size:16 fixed_length:true
 *StoreForwardServiceDiscoveryRequest.request_id max_size:16 fixed_length:true
 *StoreForwardServiceAdvertisement.archive_public_key max_size:32 fixed_length:true
-*StoreForwardServiceAdvertisement.request_id max_size:16 fixed_length:true
+*StoreForwardServiceAdvertisement.request_id max_size:16
 
 *StoreForwardAdmissionRequest.request_id max_size:16 fixed_length:true
 *StoreForwardAdmissionRequest.scope_ids max_count:8
@@ -36,8 +36,8 @@
 *StoreForwardJoinRequest.join_token max_size:16 fixed_length:true
 
 *StoreForwardBucketDescriptor.bucket_digest max_size:32 fixed_length:true
-*StoreForwardBucketCatalogRequest.catalog_snapshot_id max_size:16 fixed_length:true
-*StoreForwardBucketCatalogPage.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardBucketCatalogRequest.catalog_snapshot_id max_size:16
+*StoreForwardBucketCatalogPage.catalog_snapshot_id max_size:16
 *StoreForwardBucketCatalogPage.buckets max_count:2
 *StoreForwardBucketRangeRequest.catalog_snapshot_id max_size:16 fixed_length:true
 *StoreForwardBucketRangePage.catalog_snapshot_id max_size:16 fixed_length:true
