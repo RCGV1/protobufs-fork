@@ -1,0 +1,63 @@
+*StoreForwardArchive.session_id max_size:8 fixed_length:true
+
+*StoreForwardArchiveRef.archive_id max_size:16 fixed_length:true
+*StoreForwardArchiveRef.scope_id max_size:16 fixed_length:true
+
+*StoreForwardArchiveServerAdvertisement.primary_public_key max_size:32 fixed_length:true
+*StoreForwardArchiveServerAdvertisement.archive_public_key max_size:32 fixed_length:true
+*StoreForwardArchiveBucketHead.bucket_digest max_size:32 fixed_length:true
+*StoreForwardArchiveBucketManifest.bucket_digest max_size:32 fixed_length:true
+*StoreForwardArchiveBucketManifest.object_ids max_count:3
+*StoreForwardArchiveBucketManifest.object_ids max_size:32 fixed_length:true
+*StoreForwardArchiveObjectRequest.object_ids max_count:3
+*StoreForwardArchiveObjectRequest.object_ids max_size:32 fixed_length:true
+*StoreForwardArchiveObjectProvide.object_id max_size:32 fixed_length:true
+*StoreForwardArchiveObjectProvide.encrypted_payload_fragment max_size:64
+
+*StoreForwardServiceDiscoveryRequest.scope_id max_size:16 fixed_length:true
+*StoreForwardServiceDiscoveryRequest.request_id max_size:16 fixed_length:true
+*StoreForwardServiceAdvertisement.archive_public_key max_size:32 fixed_length:true
+*StoreForwardServiceAdvertisement.request_id max_size:16 fixed_length:true
+
+*StoreForwardAdmissionRequest.request_id max_size:16 fixed_length:true
+*StoreForwardAdmissionRequest.scope_ids max_count:8
+*StoreForwardAdmissionRequest.scope_ids max_size:16 fixed_length:true
+*StoreForwardAdmissionChallenge.request_id max_size:16 fixed_length:true
+*StoreForwardAdmissionChallenge.nonce max_size:16 fixed_length:true
+*StoreForwardAdmissionQueued.request_id max_size:16 fixed_length:true
+*StoreForwardAdmissionProof.request_id max_size:16 fixed_length:true
+*StoreForwardAdmissionProof.selected_scope_id max_size:16 fixed_length:true
+*StoreForwardAdmissionProof.channel_proof max_size:16 fixed_length:true
+*StoreForwardAdmissionGrant.request_id max_size:16 fixed_length:true
+*StoreForwardAdmissionGrant.join_token max_size:16 fixed_length:true
+*StoreForwardAdmissionGrant.session_id max_size:8 fixed_length:true
+*StoreForwardAdmissionGrant.archive_public_key max_size:32 fixed_length:true
+*StoreForwardJoinRequest.request_id max_size:16 fixed_length:true
+*StoreForwardJoinRequest.join_token max_size:16 fixed_length:true
+
+*StoreForwardBucketDescriptor.bucket_digest max_size:32 fixed_length:true
+*StoreForwardBucketCatalogRequest.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardBucketCatalogPage.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardBucketCatalogPage.buckets max_count:2
+*StoreForwardBucketRangeRequest.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardBucketRangePage.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardBucketRangePage.buckets max_count:2
+*StoreForwardBucketEnumerateRequest.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardBucketPage.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardBucketPage.bucket_digest max_size:32 fixed_length:true
+*StoreForwardBucketPage.object_ids max_count:3
+*StoreForwardBucketPage.object_ids max_size:32 fixed_length:true
+*StoreForwardObjectRequest.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardObjectRequest.object_ids max_count:3
+*StoreForwardObjectRequest.object_ids max_size:32 fixed_length:true
+*StoreForwardObjectProvide.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardObjectProvide.object_id max_size:32 fixed_length:true
+*StoreForwardObjectProvide.encrypted_payload_fragment max_size:64
+*StoreForwardBucketVerify.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardBucketVerify.bucket_digest max_size:32 fixed_length:true
+*StoreForwardBucketVerified.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardBucketVerified.bucket_digest max_size:32 fixed_length:true
+*StoreForwardCursorCommit.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardCursorCommit.bucket_digest max_size:32 fixed_length:true
+*StoreForwardCursorCommitAccepted.catalog_snapshot_id max_size:16 fixed_length:true
+*StoreForwardCursorCommitAccepted.bucket_digest max_size:32 fixed_length:true

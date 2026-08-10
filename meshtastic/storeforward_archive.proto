@@ -1,0 +1,319 @@
+syntax = "proto3";
+
+package meshtastic;
+
+option csharp_namespace = "Meshtastic.Protobufs";
+option go_package = "github.com/meshtastic/go/generated";
+option java_outer_classname = "StoreForwardArchiveProtos";
+option java_package = "org.meshtastic.proto";
+option swift_prefix = "";
+
+// Every client-initiated operation uses a new, nonzero exchange_id. A server
+// caches the request digest and response material for that operation, allowing
+// an identical request to be retried without creating new state. Responses use
+// the same exchange_id; their object/page identifiers make fragment delivery
+// idempotent within the operation.
+message StoreForwardArchive {
+  uint32 protocol_version = 1;
+  bytes session_id = 2;
+  fixed32 exchange_id = 3;
+
+  oneof body {
+    StoreForwardAdmissionRequest admission_request = 10;
+    StoreForwardAdmissionChallenge admission_challenge = 11;
+    StoreForwardAdmissionProof admission_proof = 12;
+    StoreForwardAdmissionGrant admission_grant = 13;
+    StoreForwardJoinRequest join_request = 14;
+    StoreForwardJoinAccepted join_accepted = 15;
+    StoreForwardBucketCatalogRequest bucket_catalog_request = 16;
+    StoreForwardBucketCatalogPage bucket_catalog_page = 17;
+    StoreForwardBucketRangeRequest bucket_range_request = 18;
+    StoreForwardBucketRangePage bucket_range_page = 19;
+    StoreForwardBucketEnumerateRequest bucket_enumerate_request = 20;
+    StoreForwardBucketPage bucket_page = 21;
+    StoreForwardObjectRequest object_request = 22;
+    StoreForwardObjectProvide object_provide = 23;
+    StoreForwardBucketVerify bucket_verify = 24;
+    StoreForwardBucketVerified bucket_verified = 25;
+    StoreForwardCursorCommit cursor_commit = 26;
+    StoreForwardCursorCommitAccepted cursor_commit_accepted = 27;
+    StoreForwardSessionFinish session_finish = 28;
+    StoreForwardArchiveError error = 29;
+    StoreForwardAdmissionQueued admission_queued = 30;
+    StoreForwardArchiveServerAdvertisement archive_server_advertisement = 31;
+    StoreForwardArchiveBucketHead archive_bucket_head = 32;
+    StoreForwardArchiveBucketRequest archive_bucket_request = 33;
+    StoreForwardArchiveBucketManifest archive_bucket_manifest = 34;
+    StoreForwardArchiveObjectRequest archive_object_request = 35;
+    StoreForwardArchiveObjectProvide archive_object_provide = 36;
+    StoreForwardServiceDiscoveryRequest service_discovery_request = 37;
+    StoreForwardServiceAdvertisement service_advertisement = 38;
+  }
+}
+
+enum StoreForwardSessionRole {
+  SESSION_ROLE_UNSPECIFIED = 0;
+  SESSION_ROLE_CLIENT = 1;
+  SESSION_ROLE_REPLICA = 2;
+}
+
+message StoreForwardArchiveRef {
+  bytes archive_id = 1;
+  fixed64 archive_generation = 2;
+  bytes scope_id = 3;
+}
+
+// Archive-server mesh messages use the secondary radio's normal default-key
+// broadcast channel. They deliberately have no admission or PKI session.
+message StoreForwardArchiveServerAdvertisement {
+  StoreForwardArchiveRef archive_ref = 1;
+  fixed32 primary_node_num = 2;
+  bytes primary_public_key = 3;
+  fixed32 archive_node_num = 4;
+  bytes archive_public_key = 5;
+}
+
+message StoreForwardArchiveBucketHead {
+  StoreForwardArchiveRef archive_ref = 1;
+  fixed64 retention_floor = 2;
+  fixed64 bucket_sequence = 3;
+  fixed32 object_count = 4;
+  bytes bucket_digest = 5;
+}
+
+message StoreForwardArchiveBucketRequest {
+  StoreForwardArchiveRef archive_ref = 1;
+  fixed64 bucket_sequence = 2;
+}
+
+message StoreForwardArchiveBucketManifest {
+  StoreForwardArchiveRef archive_ref = 1;
+  fixed64 bucket_sequence = 2;
+  fixed32 object_count = 3;
+  bytes bucket_digest = 4;
+  uint32 page_index = 5;
+  bool has_more = 6;
+  repeated bytes object_ids = 7;
+}
+
+message StoreForwardArchiveObjectRequest {
+  StoreForwardArchiveRef archive_ref = 1;
+  fixed64 bucket_sequence = 2;
+  repeated bytes object_ids = 3;
+}
+
+message StoreForwardArchiveObjectProvide {
+  StoreForwardArchiveRef archive_ref = 1;
+  fixed64 bucket_sequence = 2;
+  bytes object_id = 3;
+  fixed32 from_node = 4;
+  fixed32 to = 5;
+  fixed32 packet_id = 6;
+  uint32 encrypted_payload_length = 7;
+  uint32 fragment_index = 8;
+  uint32 fragment_count = 9;
+  bytes encrypted_payload_fragment = 10;
+  uint32 original_channel_hash = 11;
+}
+
+// Client service discovery remains on the selected primary channel.
+message StoreForwardServiceDiscoveryRequest {
+  bytes scope_id = 1;
+  bytes request_id = 2;
+}
+
+message StoreForwardServiceAdvertisement {
+  StoreForwardArchiveRef archive_ref = 1;
+  fixed32 archive_node_num = 2;
+  bytes archive_public_key = 3;
+  bytes request_id = 4;
+}
+
+// Admission runs on the primary radio. scope_ids are candidates only: a
+// client proves exactly one selected scope before the server grants a session.
+message StoreForwardAdmissionRequest {
+  bytes request_id = 1;
+  repeated bytes scope_ids = 2;
+  StoreForwardSessionRole requested_role = 3;
+  bool wait_for_slot = 4;
+  fixed64 admission_epoch = 5;
+}
+
+message StoreForwardAdmissionChallenge {
+  bytes request_id = 1;
+  fixed64 admission_epoch = 2;
+  bytes nonce = 3;
+  uint32 accepted_scope_mask = 4;
+}
+
+// Sent on the primary mesh when every archive slot is occupied. The requester
+// remains on its primary profile and retries only after the advertised delay.
+message StoreForwardAdmissionQueued {
+  bytes request_id = 1;
+  fixed64 admission_epoch = 2;
+  uint32 queue_position = 3;
+  fixed32 retry_after_seconds = 4;
+}
+
+// channel_proof is a truncated HMAC over the request, challenge, selected
+// scope, and PKI requester identity. It is omitted for a configured replica.
+message StoreForwardAdmissionProof {
+  bytes request_id = 1;
+  fixed64 admission_epoch = 2;
+  bytes selected_scope_id = 3;
+  bytes channel_proof = 4;
+}
+
+message StoreForwardAdmissionGrant {
+  bytes request_id = 1;
+  fixed64 admission_epoch = 2;
+  bytes join_token = 3;
+  fixed32 join_expiry_seconds = 4;
+  bytes session_id = 5;
+  StoreForwardArchiveRef archive_ref = 6;
+  fixed32 archive_node_num = 7;
+  bytes archive_public_key = 8;
+  StoreForwardSessionRole granted_role = 9;
+  fixed32 session_epoch = 10;
+}
+
+message StoreForwardJoinRequest {
+  bytes request_id = 1;
+  fixed64 admission_epoch = 2;
+  bytes join_token = 3;
+}
+
+message StoreForwardJoinAccepted {
+  StoreForwardArchiveRef archive_ref = 1;
+  StoreForwardSessionRole granted_role = 2;
+  fixed32 session_epoch = 3;
+  fixed32 session_expiry_seconds = 4;
+}
+
+message StoreForwardBucketDescriptor {
+  fixed64 bucket_sequence = 1;
+  fixed32 object_count = 2;
+  bytes bucket_digest = 3;
+}
+
+// An empty catalog_snapshot_id requests a new bounded snapshot. A nonempty ID
+// retries or advances a page within the same leased snapshot.
+message StoreForwardBucketCatalogRequest {
+  bytes catalog_snapshot_id = 1;
+  uint32 page_index = 2;
+}
+
+message StoreForwardBucketCatalogPage {
+  bytes catalog_snapshot_id = 1;
+  fixed64 retention_floor = 2;
+  fixed32 snapshot_expiry_seconds = 3;
+  uint32 page_index = 4;
+  bool has_more = 5;
+  repeated StoreForwardBucketDescriptor buckets = 6;
+}
+
+// The server clamps max_buckets to the protocol constant. A duplicate request
+// returns the same descriptor page rather than allocating a new transfer.
+message StoreForwardBucketRangeRequest {
+  bytes catalog_snapshot_id = 1;
+  fixed64 first_bucket_sequence = 2;
+  uint32 max_buckets = 3;
+}
+
+message StoreForwardBucketRangePage {
+  bytes catalog_snapshot_id = 1;
+  fixed64 first_bucket_sequence = 2;
+  bool has_more = 3;
+  repeated StoreForwardBucketDescriptor buckets = 4;
+}
+
+message StoreForwardBucketEnumerateRequest {
+  bytes catalog_snapshot_id = 1;
+  fixed64 bucket_sequence = 2;
+  uint32 page_index = 3;
+}
+
+message StoreForwardBucketPage {
+  bytes catalog_snapshot_id = 1;
+  fixed64 bucket_sequence = 2;
+  fixed32 object_count = 3;
+  bytes bucket_digest = 4;
+  uint32 page_index = 5;
+  bool has_more = 6;
+  repeated bytes object_ids = 7;
+}
+
+message StoreForwardObjectRequest {
+  bytes catalog_snapshot_id = 1;
+  fixed64 bucket_sequence = 2;
+  repeated bytes object_ids = 3;
+}
+
+// The snapshot and bucket bind a delayed fragment to the request's immutable
+// object set. Reassemblers recompute object_id; there is no second digest.
+message StoreForwardObjectProvide {
+  bytes catalog_snapshot_id = 1;
+  fixed64 bucket_sequence = 2;
+  bytes object_id = 3;
+  fixed32 from_node = 4;
+  fixed32 to = 5;
+  fixed32 packet_id = 6;
+  uint32 encrypted_payload_length = 7;
+  uint32 fragment_index = 8;
+  uint32 fragment_count = 9;
+  bytes encrypted_payload_fragment = 10;
+  uint32 original_channel_hash = 11;
+}
+
+message StoreForwardBucketVerify {
+  bytes catalog_snapshot_id = 1;
+  fixed64 bucket_sequence = 2;
+  fixed32 object_count = 3;
+  bytes bucket_digest = 4;
+}
+
+message StoreForwardBucketVerified {
+  bytes catalog_snapshot_id = 1;
+  fixed64 bucket_sequence = 2;
+  bytes bucket_digest = 3;
+}
+
+message StoreForwardCursorCommit {
+  bytes catalog_snapshot_id = 1;
+  fixed64 bucket_sequence = 2;
+  bytes bucket_digest = 3;
+}
+
+message StoreForwardCursorCommitAccepted {
+  bytes catalog_snapshot_id = 1;
+  fixed64 bucket_sequence = 2;
+  bytes bucket_digest = 3;
+}
+
+message StoreForwardSessionFinish {
+  enum Reason {
+    REASON_UNSPECIFIED = 0;
+    REASON_COMPLETE = 1;
+    REASON_CANCELLED = 2;
+    REASON_EXPIRED = 3;
+  }
+
+  Reason reason = 1;
+}
+
+message StoreForwardArchiveError {
+  enum Code {
+    CODE_UNSPECIFIED = 0;
+    CODE_GONE = 1;
+    CODE_BUSY = 2;
+    CODE_INVALID_SESSION = 3;
+    CODE_SNAPSHOT_EXPIRED = 4;
+    CODE_LIMIT_EXCEEDED = 5;
+    CODE_NOT_AUTHORIZED = 6;
+    CODE_KEY_DISCOVERY_FAILED = 7;
+  }
+
+  Code code = 1;
+  fixed64 oldest_retained_bucket = 2;
+  StoreForwardArchiveRef archive_ref = 3;
+}
