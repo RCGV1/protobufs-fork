@@ -19,13 +19,6 @@
 *StoreForwardServiceAdvertisement.archive_public_key max_size:32 fixed_length:true
 *StoreForwardServiceAdvertisement.request_id max_size:16
 
-*StoreForwardOpaqueAdmissionRequest.request_id max_size:16 fixed_length:true
-*StoreForwardOpaqueAdmissionRequest.opaque_scope_id max_size:16 fixed_length:true
-*StoreForwardOpaqueAdmissionGrant.request_id max_size:16 fixed_length:true
-*StoreForwardOpaqueAdmissionGrant.join_token max_size:16 fixed_length:true
-*StoreForwardOpaqueAdmissionGrant.session_id max_size:8 fixed_length:true
-*StoreForwardOpaqueAdmissionGrant.archive_public_key max_size:32 fixed_length:true
-
 *StoreForwardAdmissionRequest.request_id max_size:16 fixed_length:true
 *StoreForwardAdmissionRequest.scope_ids max_count:8
 *StoreForwardAdmissionRequest.scope_ids max_size:16 fixed_length:true
